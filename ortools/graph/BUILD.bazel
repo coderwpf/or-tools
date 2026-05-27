@@ -809,6 +809,7 @@ cc_library(
     hdrs = ["rooted_tree.h"],
     visibility = ["//visibility:public"],
     deps = [
+        "//ortools/base:status_builder",
         "//ortools/base:status_macros",
         "@abseil-cpp//absl/algorithm:container",
         "@abseil-cpp//absl/log",

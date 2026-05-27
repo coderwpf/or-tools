@@ -137,7 +137,6 @@ cc_library(
     srcs = ["element_storage.cc"],
     hdrs = ["element_storage.h"],
     deps = [
-        "//ortools/base:status_macros",
         "@abseil-cpp//absl/algorithm:container",
         "@abseil-cpp//absl/container:flat_hash_map",
         "@abseil-cpp//absl/status:statusor",

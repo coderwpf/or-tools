@@ -398,7 +398,6 @@ cc_library(
     deps = [
         ":status_builder",
         "@abseil-cpp//absl/status",
-        "@abseil-cpp//absl/status:statusor",
     ],
 )
 

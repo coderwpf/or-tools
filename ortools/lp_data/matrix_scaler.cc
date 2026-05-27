@@ -18,9 +18,9 @@
 #include <cstdlib>
 #include <memory>
 #include <string>
-#include <vector>
 
 #include "absl/log/check.h"
+#include "absl/log/log.h"
 #include "absl/strings/str_format.h"
 #include "ortools/base/strong_vector.h"
 #include "ortools/glop/parameters.pb.h"

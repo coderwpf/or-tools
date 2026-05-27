@@ -27,6 +27,7 @@ cc_library(
         "@abseil-cpp//absl/status",
         "@abseil-cpp//absl/status:statusor",
         "@abseil-cpp//absl/strings",
+        "@abseil-cpp//absl/strings:str_format",
     ],
 )
 
@@ -35,9 +36,9 @@ cc_library(
     srcs = ["lp_name.cc"],
     hdrs = ["lp_name.h"],
     deps = [
-        "//ortools/base:status_macros",
         "@abseil-cpp//absl/status",
         "@abseil-cpp//absl/strings",
+        "@abseil-cpp//absl/strings:str_format",
         "@abseil-cpp//absl/strings:string_view",
     ],
 )
@@ -52,6 +53,8 @@ cc_library(
         "//ortools/base:strong_vector",
         "@abseil-cpp//absl/container:flat_hash_set",
         "@abseil-cpp//absl/log:check",
+        "@abseil-cpp//absl/status",
         "@abseil-cpp//absl/status:statusor",
+        "@abseil-cpp//absl/strings",
     ],
 )

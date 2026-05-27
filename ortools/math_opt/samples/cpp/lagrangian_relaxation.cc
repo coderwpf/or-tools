@@ -95,7 +95,6 @@
 #include "ortools/base/container_logging.h"
 #include "ortools/base/init_google.h"
 #include "ortools/base/mathutil.h"
-#include "ortools/base/status_builder.h"
 #include "ortools/base/status_macros.h"
 #include "ortools/math_opt/cpp/math_opt.h"
 

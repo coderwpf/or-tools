@@ -304,7 +304,7 @@ absl::StatusOr<int64_t> Xpress::GetIntControl64(int control) const {
   XPRSint64 result;
   OR_RETURN_IF_ERROR(
       ToStatus(XPRSgetintcontrol64(xpress_model_, control, &result)))
-      << "Error getting Xpress int64 control: " << control;
+      << "Error getting Xpress int64_t control: " << control;
   return result;
 }
 
@@ -326,8 +326,8 @@ absl::Status Xpress::SetDblControl(int control, double value) {
 
 absl::StatusOr<std::string> Xpress::GetStrControl(int control) const {
   int nbytes = 0;
-  OR_RETURN_IF_ERROR(
-      ToStatus(XPRSgetstringcontrol(xpress_model_, control, NULL, 0, &nbytes)));
+  OR_RETURN_IF_ERROR(ToStatus(
+      XPRSgetstringcontrol(xpress_model_, control, nullptr, 0, &nbytes)));
   std::vector<char> result(nbytes,
                            '\0');  // nbytes CONTAINS the terminating nul!
   OR_RETURN_IF_ERROR(ToStatus(XPRSgetstringcontrol(
@@ -454,7 +454,7 @@ absl::Status Xpress::AddMIPSol(absl::Span<double const> vals,
   if (checkInt32Overflow(colind.size()))
     return absl::InvalidArgumentError("more start values than columns");
   if (colind.size() != vals.size())
-    return absl::InvalidArgumentError("inconsitent data to AddMIPSol()");
+    return absl::InvalidArgumentError("inconsistent data to AddMIPSol()");
   // XPRSaddmipsol() supports colind=nullptr, but we do not support that here
   // since we don't need it.
   return ToStatus(XPRSaddmipsol(xpress_model_, static_cast<int>(colind.size()),
@@ -587,12 +587,17 @@ absl::Status Xpress::AddQRow(char sense, double rhs, double rng,
   if (checkInt32Overflow(std::size_t(oldRows) + 1))
     return absl::InvalidArgumentError(
         "XPRESS cannot handle more than 2^31 rows");
+  if (colind.size() != rowcoef.size() || qcol1.size() != qcol2.size() ||
+      qcol1.size() != qcoef.size())
+    return absl::InvalidArgumentError("inconsistent arguments to AddQRows");
   XPRSint64 const start = 0;
+  const int num_coefs = static_cast<int>(rowcoef.size());
   OR_RETURN_IF_ERROR(
-      ToStatus(XPRSaddrows64(xpress_model_, 1, colind.size(), &sense, &rhs,
-                             &rng, &start, colind.data(), rowcoef.data())));
-  if (qcol1.size() > 0) {
-    int const ret = XPRSaddqmatrix64(xpress_model_, oldRows, qcol1.size(),
+      ToStatus(XPRSaddrows64(xpress_model_, 1, num_coefs, &sense, &rhs, &rng,
+                             &start, colind.data(), rowcoef.data())));
+  if (!qcol1.empty()) {
+    const int num_qcoefs = static_cast<int>(qcoef.size());
+    int const ret = XPRSaddqmatrix64(xpress_model_, oldRows, num_qcoefs,
                                      qcol1.data(), qcol2.data(), qcoef.data());
     if (ret != 0) {
       XPRSdelrows(xpress_model_, 1, &oldRows);
@@ -626,7 +631,7 @@ absl::Status Xpress::ChgBounds(absl::Span<int const> colind,
                                absl::Span<char const> bndtype,
                                absl::Span<double const> bndval) {
   if (colind.size() != bndtype.size() || colind.size() != bndval.size())
-    return absl::InvalidArgumentError("inconsitent data to ChgBounds()");
+    return absl::InvalidArgumentError("inconsistent data to ChgBounds()");
   if (checkInt32Overflow(colind.size()))
     return absl::InvalidArgumentError(
         "XPRESS cannot handle more than 2^31 bound changes");
@@ -636,7 +641,7 @@ absl::Status Xpress::ChgBounds(absl::Span<int const> colind,
 absl::Status Xpress::ChgColType(absl::Span<int const> colind,
                                 absl::Span<char const> coltype) {
   if (colind.size() != coltype.size())
-    return absl::InvalidArgumentError("inconsitent data to ChgColType()");
+    return absl::InvalidArgumentError("inconsistent data to ChgColType()");
   if (checkInt32Overflow(colind.size()))
     return absl::InvalidArgumentError(
         "XPRESS cannot handle more than 2^31 type changes");
